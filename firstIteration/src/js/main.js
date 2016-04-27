@@ -3,6 +3,7 @@
 import { Observable as $ } from 'rx';
 import { div, br, label, input, h } from '@cycle/dom'; // h to generate html
 import { Input } from './helpers';
+import {makeHTTPDriver} from '@cycle/http'; 
 
 const STREAM_SERVER_URL = 'http://localhost:1337/toggle'
 
@@ -36,7 +37,7 @@ export default ({ DOM }) => {
 		.startWith(false);
 
 	const searchRequest$ = DOM.select('.input').events('click')
-		.map(event => STREAM_SERVER_URL + encodeURI(q))
+		.map(event => STREAM_SERVER_URL) // we just send a request for every event
 		.startWith(false);
 
 	return {
@@ -47,7 +48,7 @@ export default ({ DOM }) => {
 				h('p', `${toggled ? 'On': 'Off'}`)
 				])
 			),
-		push: toggled$
+		push: searchRequest$
 	};
 
 };

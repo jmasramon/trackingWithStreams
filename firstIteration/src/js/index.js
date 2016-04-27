@@ -3,17 +3,19 @@
 import { run } from '@cycle/core';
 import { makeDOMDriver, makeHTMLDriver } from '@cycle/dom';
 import { rerunner, restartable } from 'cycle-restart';
+import { makeHTTPDriver } from '@cycle/http';
 
 let main = require('./main').default;
 
 export default () =>
 	run(main, {
-		DOM: makeHTMLDriver()
+		DOM: makeHTMLDriver(),
 	});
 
 if (CLIENT) {
 	let drivers = {
-		DOM: restartable(makeDOMDriver('#root'), { pauseSinksWhileReplaying: false })
+		DOM: restartable(makeDOMDriver('#root'), { pauseSinksWhileReplaying: false }),
+		HTTP: makeHTTPDriver()
 	};
 
 	let rerun = rerunner(run);
