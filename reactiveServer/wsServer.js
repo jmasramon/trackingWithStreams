@@ -9,15 +9,18 @@ var onMessageFromOrigin;
 function onConnectToSerializer(ws) {
   console.log('Client connected on localhost:8080');
 
-  onMessageFromOrigin = Rx.Observable.fromEvent(ws, 'message').share();
+  onMessageFromOrigin = Rx.Observable
+    .fromEvent(ws, 'message')
+    .share();
   onMessageFromOrigin
     .subscribe(function(message) {
       console.log('received:', message);
       ws.send(JSON.stringify({response: 'Roger!'}),
         function(err) {
           if (err) {
-          console.log('There was an error sending the message');
-        } });
+            console.log('There was an error sending the message');
+        } 
+      });
     });
 }
 
@@ -30,17 +33,22 @@ function onConnectToReplayer(ws) {
       ws.send(JSON.stringify(message),
         function(err) {
           if (err) {
-          console.log('There was an error sending the message');
-        } });
+            console.log('There was an error sending the message');
+        } 
+      });
     });
 }
 
 const SerializerServer = new WebSocketServer({ port: 8080});
-Rx.Observable.fromEvent(SerializerServer, 'connection').subscribe(onConnectToSerializer);
+Rx.Observable
+  .fromEvent(SerializerServer, 'connection')
+  .subscribe(onConnectToSerializer);
 console.log('listening on port 8080')
 
 const ReplayerServer = new WebSocketServer({ port: 8081});
-Rx.Observable.fromEvent(ReplayerServer, 'connection').subscribe(onConnectToReplayer);
+Rx.Observable
+  .fromEvent(ReplayerServer, 'connection')
+  .subscribe(onConnectToReplayer);
 console.log('listening on port 8081')
 
 // function sendHello(e) {
