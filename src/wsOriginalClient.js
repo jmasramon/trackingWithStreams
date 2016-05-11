@@ -1,15 +1,10 @@
+var plus = document.getElementById('plusButton');
+var counter = document.getElementById('counter');
+var minus = document.getElementById('minusButton');
+var count = 0;
+
 var openObserver = Rx.Observer.create(function(e) {
     console.info('socket 8080 open');
-
-    var messageGenerator$ = Rx.Observable.interval(1500 /* ms */);
-
-    messageGenerator$
-        .take(5)
-        .delay(300)
-        .subscribe(function(index) {
-            console.log('sending message num:', index);
-            oringinalSocketSubject.onNext(JSON.stringify({quakes: 'hola lola' + index }));
-        });
 });
 
 // an observer for when the socket is about to close
@@ -21,16 +16,29 @@ var oringinalSocketSubject = Rx.DOM.fromWebSocket('ws://127.0.0.1:8080',
                                         null, // no protocol
                                         openObserver,
                                         closingObserver);
-oringinalSocketSubject.
-    subscribe(function(data) {
-        console.log('received ack:', data);
+oringinalSocketSubject
+    .tap(function(mesEvent) {
+        console.log('received mes:', mesEvent);
+    })
+    .subscribe(function(mesEvent) {
+        var data = JSON.parse(mesEvent.data);
+        // console.log('received data object:', data);
+        if (data['clicks']){
+            console.log('received a click');
+            if (data.clicks.indexOf('plus')>-1){
+                console.log('received click on +');
+                count += 1;
+            } else if (data.clicks.indexOf('minus')>-1){
+                console.log('received click on -');
+                count -= 1;
+            }
+            counter.innerHTML = count;
+        }
+        if(data['quakes']){
+            console.log('received a quake');
+        }
     });
 
-
-var plus = document.getElementById('plusButton');
-var counter = document.getElementById('counter');
-var minus = document.getElementById('minusButton');
-var count = 0;
 
 var plusObserver = Rx.Observable.fromEvent(plus, 'click');
 plusObserver.
@@ -38,7 +46,7 @@ plusObserver.
         console.log('clicked on +');
         count += 1;
         counter.innerHTML = count;
-        oringinalSocketSubject.onNext(JSON.stringify({clicks: 'Clicked on plus button'}));
+        oringinalSocketSubject.onNext(JSON.stringify({clicks: 'Clicked on minus button'}));
     });
 
 var minusObserver = Rx.Observable.fromEvent(minus, 'click');
@@ -47,6 +55,6 @@ minusObserver.
         console.log('clicked on -');
         count -= 1;
         counter.innerHTML = count;
-        oringinalSocketSubject.onNext(JSON.stringify({clicks: 'Clicked on minus button'}));
+        oringinalSocketSubject.onNext(JSON.stringify({clicks: 'Clicked on plus button'}));
     });
 
