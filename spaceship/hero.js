@@ -20,7 +20,10 @@ var clicks$ = Rx.Observable
 var spaces$ = Rx.Observable
     .fromEvent(document, 'keypress')
     .filter(function(event) {
-        return event.keycode == 32;
+        return event.keyCode == 32;
+    })
+    .tap(function(event) {
+        console.log('event', event);
     });
 
 

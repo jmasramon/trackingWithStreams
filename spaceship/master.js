@@ -1,15 +1,15 @@
 var openObserver = Rx.Observer.create(function(e) {
     console.info('socket 8080 open');
 
-    var messageGenerator$ = Rx.Observable.interval(1500 /* ms */);
+    // var messageGenerator$ = Rx.Observable.interval(1500 /* ms */);
 
-    messageGenerator$
-        .take(5)
-        .delay(300)
-        .subscribe(function(index) {
-            console.log('sending message num:', index);
-            oringinalSocketSubject.onNext(JSON.stringify({quakes: 'hola lola' + index }));
-        });
+    // messageGenerator$
+    //     .take(5)
+    //     .delay(300)
+    //     .subscribe(function(index) {
+    //         console.log('sending message num:', index);
+    //         oringinalSocketSubject.onNext(JSON.stringify({quakes: 'hola lola' + index }));
+    //     });
 });
 
 // an observer for when the socket is about to close
